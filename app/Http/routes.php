@@ -22,6 +22,7 @@ Route::post('photos/massmove', 'AlbumsController@massMove');
 Route::post('albums/{albums}/upload', 'AlbumsController@upload');
 Route::resource('albums', 'AlbumsController');
 
+// List photos by tag:
 Route::get('photos/tag/{tag}', 'PhotosController@tag');
 Route::get('photos/{photos}/comment', 'PhotosController@createComment');
 Route::post('photos/{photos}/comment', 'PhotosController@storeComment');

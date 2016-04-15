@@ -7,7 +7,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h1>{{ $album->name }}</h1>
-                    <h3>&nbsp;by {{ $album->user->name }}</h3>
+                    <h4>&nbsp;by {{ $album->user->name }}</h4>
                 @if (Auth::check() && Auth::user()->id == $album->user_id)
                     <a class="btn btn-info pull-right" href="{{ action('AlbumsController@edit', [$album->id]) }}"><i class="fa fa-btn fa-pencil-square-o"></i> Edit</a>
                 @endif

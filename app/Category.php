@@ -13,7 +13,7 @@ class Category extends Model
     /**
      * Get the albums associated with the given tag.
      * 
-     * @return \Illuminate\Database\Eloquent\Relationships\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relationships\HasMany
      */
     public function albums() {
         return $this->hasMany('App\Album');

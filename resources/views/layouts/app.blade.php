@@ -17,7 +17,8 @@
     <link href="{{ asset('css/dropzone.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/colorbox.css') }}" rel="stylesheet" />
     
-    <link href="{{ elixir('css/app.css') }}" rel="stylesheet">
+    <!--<link href="{{ elixir('css/app.css') }}" rel="stylesheet">-->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <base href="{{ url('/') }}">
 </head>
@@ -78,7 +79,8 @@
 
     <script src="{{ asset('js/jquery.colorbox-min.js') }}"></script>
     
-    <script src="{{ elixir('js/app.js') }}"></script>
+    <!--<script src="{{ elixir('js/app.js') }}"></script>-->
+    <script src="{{ asset('js/app.js') }}"></script>
     @yield('footer')
 </body>
 </html>

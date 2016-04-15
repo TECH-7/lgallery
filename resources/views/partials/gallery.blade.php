@@ -33,7 +33,8 @@
     function prepareGallery() {
         $(".img-wrap .gal").colorbox({rel:'img', maxWidth:'100%'});
     
-		$('.img-wrap').hover(
+		// Caption to display on hover
+        $('.img-wrap').hover(
 			function() {
 				if ($(this).next().html().trim()!='')
 					$(this).next().slideDown();
@@ -43,7 +44,7 @@
 			}
 		);        
 
-        //hides the default paginator
+        //hides the default paginator for jscroll lazy load
         $('ul.pagination:visible:first').hide();
     }
     
@@ -54,7 +55,7 @@
         //nextSelector - this will look for the automatically created
         //contentSelector - this is the element wrapper which is cloned and appended with new paginated data
         $('section.scroller').jscroll({
-            debug: true,
+            //debug: true,
             autoTrigger: true,
             nextSelector: '.pagination li.active + li a',
             contentSelector: 'section.scroller ul',

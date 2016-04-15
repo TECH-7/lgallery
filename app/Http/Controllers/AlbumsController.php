@@ -8,6 +8,7 @@ use App\Photo;
 use App\Http\Requests\AlbumRequest;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 use App\Http\Requests;
 
@@ -19,7 +20,7 @@ class AlbumsController extends Controller
     }
     
     public function index() {
-        $albums = Album::latest()->paginate(6);
+        $albums = Album::latest()->paginate(Config::get('listing.albums_paginate'));
         
         return view('albums.index',compact('albums'));
     }
@@ -58,10 +59,12 @@ class AlbumsController extends Controller
             flash()->overlay('All valid photos are uploaded.','Congratulations!');
         }
         
+        // Prepare select Album box for mass photo move
         $ownerAlbums = Auth::user()->albums()->where('id', '<>', $album->id)->lists('name', 'id');
         $ownerAlbums->prepend('Choose an Album', 0);
+        
         $categories = \App\Category::lists('name', 'id');
-        $photos = $album->photos()->orderBy('sort_order', 'desc')->get();
+        $photos = $album->photos()->ranked()->get();
         $tags = \App\Tag::lists('name', 'id');
         
         return view('albums.edit', compact('album', 'categories','photos','tags', 'ownerAlbums'));
@@ -72,6 +75,7 @@ class AlbumsController extends Controller
 
         $album->update($requestArr);
 
+        // Save & Continue Button Pressed
         if ($request->has('continue') && $request['continue'] == 'true') {
             return redirect(action('AlbumsController@edit', $album->id));
         }
@@ -81,8 +85,10 @@ class AlbumsController extends Controller
     }    
     
     public function show(Album $album) {
+        // A Possible Back Button destination
         session()->put('url.photoList', request()->path());
-        $photos = $album->photos()->orderBy('sort_order', 'desc')->paginate(8);
+        
+        $photos = $album->photos()->ranked()->paginate(Config::get('listing.photos_paginate'));
         
         return view('albums.view', compact('album', 'photos'));
     }
@@ -126,16 +132,16 @@ class AlbumsController extends Controller
         $ids = $this->validateMassMoveRequest($request);
         if (!$ids) {
             if ($request->ajax()) {
-                return response()->json('error', 403);
+                return response()->json('error', 400);
             }
             else {
-                flash()->error('Mass Move Request Invalid');
+                flash()->error('Error: Mass Move Request Invalid');
                 return back();
             }
         }
         $album = Album::find($request['album_id']);
         if (!$this->isOwner($album) || is_null($album)) {
-            flash()->error('Mass Move Request Invalid');
+            flash()->error('Error: Mass Move Request Invalid');
             return back();
         }
         
@@ -149,7 +155,7 @@ class AlbumsController extends Controller
     }
     
     /**
-     * Save a new Article
+     * Save a new Album
      * 
      * @param ArticleRequest $request
      */
@@ -158,6 +164,12 @@ class AlbumsController extends Controller
         return $album;
     }
     
+    /**
+     * Return request array with Save & Continue info removed
+     * 
+     * @param AlbumRequest $request
+     * @return array
+     */
     private function cleanRequest(AlbumRequest $request) {
         $requestArr = $request->all();
         if ($request->has('continue') && $request['continue'] == 'true') {
@@ -174,7 +186,7 @@ class AlbumsController extends Controller
         if (!isNull($request) && $request->ajax()) {
             return response()->json('Error: You are not the owner of this Photo', 403);
         }            
-        flash()->error('You are not the owner of this Album');
+        flash()->error('Error: You are not the owner of this Album');
         return back();        
     }
     

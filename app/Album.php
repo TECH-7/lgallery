@@ -14,7 +14,7 @@ class Album extends Model
     ];
     
     /**
-     * An Album is owned by a user
+     * An Album is owned by a User
      * 
      * @return \Illuminate\Database\Eloquent\Relationships\BelongsTo
      */
@@ -23,7 +23,7 @@ class Album extends Model
     }
     
     /**
-     * An Album belongs to a category
+     * An Album belongs to a Category
      * 
      * @return \Illuminate\Database\Eloquent\Relationships\BelongsTo
      */
@@ -32,9 +32,9 @@ class Album extends Model
     }
     
     /**
-     * An Album has many photos
+     * An Album has many Photos
      * 
-     * @return \Illuminate\Database\Eloquent\Relationships\hasMany
+     * @return \Illuminate\Database\Eloquent\Relationships\HasMany
      */
     public function photos() {
         return $this->hasMany('App\Photo');

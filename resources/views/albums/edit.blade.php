@@ -97,6 +97,7 @@
         return (qMarkInd > -1 ? url.substr(0,qMarkInd) : url);
     }
 
+    // Quick Tags for each photo saves immediate with Ajax
     $('.tag_list').select2({
         tags: true,
         placeholder: 'Choose a Tag'
@@ -115,7 +116,7 @@
             },
             error: function(xhr, statusText, errorThrown) {
                 $("div#ajax-msg")
-                        .html('<div class="text-danger"><h2>Error:</h2><p>' + errorThrown + ': ' + statusText +  '</p></div>')
+                        .html('<div class="text-danger"><h2><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Error:<p>' + errorThrown + ': ' + statusText +  '</p></h2></div>')
                         .slideDown()
                         .delay(1500)        
                         .fadeOut("slow");
@@ -124,23 +125,25 @@
         
     });    
     
-$('#confirmDelete').on('show.bs.modal', function (e) {
-    $message = $(e.relatedTarget).attr('data-message');
-    $(this).find('.modal-body p').text($message);
-    $title = $(e.relatedTarget).attr('data-title');
-    $(this).find('.modal-title').text($title);
+    // Common Delete / Mass Move Confirmation
+    $('#confirmDelete').on('show.bs.modal', function (e) {
+        $message = $(e.relatedTarget).attr('data-message');
+        $(this).find('.modal-body p').text($message);
+        $title = $(e.relatedTarget).attr('data-title');
+        $(this).find('.modal-title').text($title);
 
-    // Pass form reference to modal for submission on yes/ok
-    var form = $(e.relatedTarget).closest('form');
-    $(this).find('.modal-footer #confirm').data('form', form);
-});
+        // Pass form reference to modal for submission on yes/ok
+        var form = $(e.relatedTarget).closest('form');
+        $(this).find('.modal-footer #confirm').data('form', form);
+    });
 
-<!-- Form confirm (yes/ok) handler, submits form -->
-$('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
-    $(this).data('form').submit();
-});
+    <!-- Form confirm (yes/ok) handler, submits form -->
+    $('#confirmDelete').find('.modal-footer #confirm').on('click', function(){
+        $(this).data('form').submit();
+    });
 
-Dropzone.options.photoDropzone = {
+  // Dropzone bulk file uploader
+  Dropzone.options.photoDropzone = {
     acceptedFiles: 'image/*',
     autoProcessQueue: false,
     parallelUploads: 4,
@@ -197,6 +200,7 @@ Dropzone.options.photoDropzone = {
   };
   
   $(document).ready(function($) {
+    // Album create successful modal to only show once
     var url = window.location.href;
     if (url.indexOf('?') > -1) {
        if (window.history != undefined && window.history.pushState != undefined) {
@@ -204,7 +208,7 @@ Dropzone.options.photoDropzone = {
        }
     }
     
-    
+    // Collect selected Photo IDs for Mass Move / Delete buttons
     $('.select-checkbox').click(function() {
         var selected = [];
         $('.select-checkbox').each(function(i,el) {
@@ -223,9 +227,12 @@ Dropzone.options.photoDropzone = {
         else {
             $('#mass-delete-button, #mass-move-button').attr('disabled','');
         }
+        // ID collection fields .ids-field, one for each individual form
+        // but both updated at the same time
         $('.ids-field').val(selected.join());
     });
     
+    // To make sure the Mass move button is only activated when Album is selected
     $('#album_id').change(function() {
         if ($('#album_id').val() > 0 && $('.ids-field').val().length > 0)
             $('#mass-move-button').removeAttr('disabled');

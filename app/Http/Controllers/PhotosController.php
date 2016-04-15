@@ -7,6 +7,7 @@ use App\Photo;
 use App\Tag;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 use App\Http\Requests;
 use App\Http\Requests\CommentRequest;
@@ -14,26 +15,21 @@ use App\Http\Requests\PhotoRequest;
 
 class PhotosController extends Controller
 {
-    protected $fillable = [
-        'alt_text',
-        'caption',
-        'sort_order'
-    ];
-
     public function __construct() {
         //$this->middleware('auth', ['only' => 'create']);
         $this->middleware('auth', ['except' => ['tag','createComment','index']]);
     }
     
     public function index() {
+        // Possible Back Button destination
         session()->put('url.photoList', request()->path());
-        $photos = Photo::orderBy('sort_order','desc')->orderBy('updated_at', 'desc')->paginate(4);
+        $photos = Photo::ranked()->orderBy('updated_at', 'desc')->paginate(Config::get('listing.photos_paginate'));
         
         return view('photos.index',compact('photos'));        
     }
 
     public function createComment(Photo $photo) {
-        $this->setLoginReturnPath();
+        $this->saveLoginReturnPath();
         $backUrl = $this->getBackButtonUrl($photo);
         
         $comments = $photo->comments()->orderBy('created_at')->get();
@@ -52,7 +48,7 @@ class PhotosController extends Controller
         if (!$this->isOwner($photo)) {
             $this->notOwnerResponse();
         }
-        $tags = \App\Tag::lists('name', 'id');
+        $tags = Tag::lists('name', 'id');
         
         return view('photos.edit', compact('photo','tags'));
     }
@@ -62,22 +58,33 @@ class PhotosController extends Controller
             $this->notOwnerResponse($request);
         }
         
-        $photo->update($request->all());
+        $success = $photo->update($request->all());
         $this->syncTags($photo, $request);
         
         if($request->ajax()){
-            return response()->json('success', 200);
+            if ($success) {
+                return response()->json('success', 200);
+            }
+            else {
+                return response()->json('error', 500);
+            }
         }
         return redirect()->action('AlbumsController@edit', $photo->album->id);
     }
     
+    /**
+     * Search photos by Tag page
+     * 
+     * @param type $tag
+     * @return type
+     */
     public function tag($tag) {
         session()->put('url.photoList', request()->path());
         $photos = Photo::whereHas('tags', function($q) use ($tag)
         {
             $q->where('name', '=', $tag);
 
-        })->paginate(8);        
+        })->paginate(Config::get('listing.photos_paginate'));        
         
         return view('photos.index',compact('photos', 'tag'));        
     }
@@ -87,14 +94,13 @@ class PhotosController extends Controller
             $this->notOwnerResponse($request);
         }
         
-        $photo_id = $photo->album->id;
-        
+        $album_id = $photo->album->id;
         // Moved to AppServiceProvider Event
         //unlink(Photo::IMAGE_FOLDER . '/' . $photo->filename);
         //unlink(Photo::THUMBNAIL_FOLDER . '/' . $photo->filename);
         $photo->delete();
 
-        return redirect()->action('AlbumsController@edit', $photo_id);
+        return redirect()->action('AlbumsController@edit', $album_id);
     }
     
     public function massDestroy(Request $request) {
@@ -104,7 +110,7 @@ class PhotosController extends Controller
                 return response()->json('error', 403);
             }
             else {
-                flash()->error('Mass Delete Request Invalid');
+                flash()->error('Error: Mass Delete Request Invalid');
                 return back();
             }
         }
@@ -140,9 +146,15 @@ class PhotosController extends Controller
         return $ids;
     }
     
+    /**
+     * Check if logged-in user is the owner of the photo
+     * 
+     * @param Photo $photo
+     * @return type
+     */
     private function isOwner(Photo $photo) {
         return Auth::user()->id == $photo->album->user_id;
-    }
+    }    
     
     private function notOwnerResponse(Request $request = null) {
         if (!isNull($request) && $request->ajax()) {
@@ -152,6 +164,13 @@ class PhotosController extends Controller
         return back();        
     }
 
+    /**
+     * Sync entries in Photo_Tag anchor table and Create new tag
+     * when necessary
+     * 
+     * @param Photo $photo
+     * @param PhotoRequest $request
+     */
     private function syncTags(Photo $photo, PhotoRequest $request) {
         $tag_list = $this->createNewTags($request);
         $photo->tags()->sync($tag_list);
@@ -159,8 +178,11 @@ class PhotosController extends Controller
         $this->removeZombieTags();
     }
     
+    /**
+     * Remove tags that are no longer used from DB
+     */
     private function removeZombieTags() {
-        $tags = \App\Tag::all();
+        $tags = Tag::all();
         foreach ($tags as $tag) {
             if ($tag->photos()->count() < 1) {
                 echo $tag->delete();
@@ -168,13 +190,22 @@ class PhotosController extends Controller
         }        
     }
     
+    /**
+     * Create new tags if added by User.
+     * Method will look for new Tag names from the tag_list request field
+     * and convert it to the id of the newly created Tag model and sends
+     * it back to the original array as a id:name pair
+     * 
+     * @param PhotoRequest $request
+     * @return array
+     */
     private function createNewTags(PhotoRequest $request) {
         $tag_list = $request['tag_list'];
         if (!empty($tag_list)) {
-            $tags = \App\Tag::lists('id')->toArray();
+            $tags = Tag::lists('id')->toArray();
             $diff = array_unique(array_diff($tag_list, $tags));
             foreach($diff as $new) {
-                $tag = \App\Tag::create(['name' => $new]);
+                $tag = Tag::create(['name' => $new]);
                 $index = array_search($new, $tag_list, true);
                 $tag_list[$index] = $tag->id;
             }
@@ -183,7 +214,12 @@ class PhotosController extends Controller
         return [];
     }
     
-    private function setLoginReturnPath() {
+    /**
+     *  For the "Login to add a comment" link.
+     *  So that the user is return to the comment page
+     *  right after login
+     */    
+    private function saveLoginReturnPath() {
         if (Auth::check()) {
             session()->forget('url.intended');
         }
@@ -192,6 +228,13 @@ class PhotosController extends Controller
         }
     }
     
+    /**
+     * Prevent undesirable Back Button destination
+     * (returning to login page etc..)
+     * 
+     * @param Photo $photo
+     * @return string
+     */
     private function getBackButtonUrl(Photo $photo) {
         $backUrl = url()->previous();
         if ($backUrl == action('Auth\AuthController@showLoginForm') || $backUrl == '/' || action('PhotosController@createComment', $photo->id)) {

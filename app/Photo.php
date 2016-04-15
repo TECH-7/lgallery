@@ -35,7 +35,7 @@ class Photo extends Model
     }
     
     /**
-     * Get Tags associated with the given article
+     * Get Tags associated with the given Album
      * 
      * @return \Illuminate\Database\Eloquent\Relationships\BelongsToMany
      */
@@ -51,10 +51,17 @@ class Photo extends Model
         return $this->tags->lists('id')->toArray();
     }    
     
+    /**
+     * Full size URL of the Photo
+     * @return type
+     */
     public function getUrlAttribute() {
         return self::IMAGE_FOLDER . '/' . $this->filename;
     }    
-    
+    /**
+     * Thumbnail size URL of the Photo
+     * @return boolean
+     */
     public function getThumbnailUrlAttribute() {
         if (!($url = $this->generateThumbnail())) {
             return false;
@@ -92,6 +99,12 @@ class Photo extends Model
         return $url;
     }
     
+    /**
+     * List Photos by Sort Order Rating
+     * Highest number first
+     * 
+     * @param type $query
+     */
     public function scopeRanked($query) {
         $query->orderBy('sort_order', 'desc');
     }

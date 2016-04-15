@@ -20,7 +20,8 @@
                                 <a href="{{ action('AlbumsController@show', [$album->id]) }}">
                                     <article class="item">
                                         <header>
-                                            <h2>{{ $album->name }}</h2>
+                                            <h1>{{ $album->name }}</h1>
+                                            <h4>by {{ $album->user->name }}</h4>
                                             <h3>({{ $album->category->name }})</h3>
                                         </header>
                                         <section class="photo-wrap">
@@ -43,3 +44,23 @@
     </div>
 </div>                
 @stop
+
+@section('footer')
+<script>
+$( document ).ready(function() {
+    // Make sure Title fits on current window size
+    // and adjust font-size if necessary
+    $( ".item > header" ).each(function( index ) {
+      var h1 = $(this).find("h1");
+      var width = $(this).width();
+        if (h1.width() > width) {
+          var fs = h1.css('font-size');
+          if (fs.indexOf('px') > -1) {
+            fs = parseInt(fs.replace('px', ''));
+            h1.css('font-size', ( (fs-1)*(width/h1.width()) ) + 'px');
+          }
+        }
+    });
+});
+</script>
+@append

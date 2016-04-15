@@ -18,7 +18,6 @@
                         </section>
                         <section class="col-md-10">
                         @if (Auth::check())
-                            
                             {!! Form::open( array('class' => 'form-horizontal', 'role' => 'form', 'url' => action('PhotosController@storeComment', $photo->id)) ) !!}
                             <div class="form-group{{ $errors->has('content') ? ' has-error' : '' }}">
                                 <label class="col-md-5 control-label">Leave a Comment</label>

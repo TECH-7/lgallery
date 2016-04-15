@@ -57,9 +57,15 @@ h1, h2, h3 {
 section, figure {
   margin-bottom: 20px !important; }
 
-.panel-heading > *, .item h2 {
+.panel-heading > *, .item h1 {
   margin: 0;
   display: inline-block; }
+
+.item header > * {
+  white-space: nowrap; }
+
+.item h4 {
+  color: black; }
 
 .panel-heading section {
   margin-top: 5px;
@@ -67,6 +73,15 @@ section, figure {
 
 section.photo-wrap {
   margin-bottom: 0 !important; }
+
+#albums .item section.photo-wrap {
+  height: 300px;
+  overflow: hidden; }
+
+@-moz-document url-prefix() {
+  /* FireFox */
+  #albums .item section.photo-wrap {
+    height: 258px; } }
 
 .panel-albums article {
   border: 1px solid black;
@@ -108,17 +123,18 @@ ul.grid li {
   font-weight: bold; }
 
 section.tags {
+  position: relative;
   overflow-y: auto;
-  width: 80%; }
+  width: 80%;
+  height: 34px; }
   section.tags nav {
-    position: relative;
-    height: 28px;
-    /*width: 100%;*/ }
+    width: 100%; }
     section.tags nav .btn {
-      margin-bottom: 2px; }
+      margin-bottom: 6px; }
 
 #albums .item {
-  padding: 4%; }
+  padding: 4%;
+  overflow: hidden; }
 
 #gallery .item {
   width: 100%;

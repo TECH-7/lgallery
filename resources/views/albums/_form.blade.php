@@ -59,7 +59,7 @@
     
 <div class="form-group">
     <div class="col-md-12">
-        <a href="{{ $cancelLink }}" class="btn btn-primary"><i class="fa fa-btn fa-arrow-circle-o-left"></i> Cancel</a>
+        <a href="{{ $cancelLink }}" class="btn btn-primary"><i class="fa fa-btn fa-arrow-circle-o-left"></i> Back</a>
         {!! Form::button('<i class="fa fa-btn fa-save"></i>' . $submitButtonText, ['type' => 'submit', 'class' => 'btn btn-primary pull-right']) !!}
         {!! Form::button('<i class="fa fa-btn fa-save"></i>' . $submitButtonText . ' &amp; Continue', ['type' => 'submit', 'class' => 'btn btn-primary pull-right', 'name' => 'continue', 'value' => 'true']) !!}
         <div id="changed-warning" class="text-danger pull-right" style="display: none;">Save changes first before leaving or uploading to album:</div>
@@ -69,8 +69,9 @@
 
 @section('footer')
 <script>
-$("form#album-edit :input").change(function() {
-    $("form#album-edit #changed-warning").show();
-});
+    // Show warning message when form is changed
+    $("form#album-edit :input").change(function() {
+        $("form#album-edit #changed-warning").show();
+    });
 </script>
 @append
