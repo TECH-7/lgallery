@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 15, 2016 at 02:51 AM
+-- Generation Time: Apr 15, 2016 at 04:58 PM
 -- Server version: 5.6.28-0ubuntu0.14.04.1
 -- PHP Version: 5.5.9-1ubuntu4.14
 
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `albums` (
   PRIMARY KEY (`id`),
   KEY `albums_user_id_foreign` (`user_id`),
   KEY `albums_category_id_foreign` (`category_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data for table `albums`
@@ -173,7 +173,7 @@ INSERT INTO `photos` (`id`, `album_id`, `filename`, `alt_text`, `caption`, `sort
 (5, 4, '2_570ceb1c87fa50.73432965.jpg', '', '', 0, '2016-04-12 00:33:32', '2016-04-13 22:55:22'),
 (6, 3, '2_570ceb1c885187.27416007.jpg', '', '', 0, '2016-04-12 00:33:32', '2016-04-14 02:01:17'),
 (7, 3, '2_570ceb257347b9.42902014.jpg', '', '', 0, '2016-04-12 00:33:41', '2016-04-14 02:01:17'),
-(8, 3, '2_570ceb2572c2d1.65512243.jpg', '', '', 0, '2016-04-12 00:33:41', '2016-04-14 02:01:17'),
+(8, 3, '2_570ceb2572c2d1.65512243.jpg', '', '', 0, '2016-04-12 00:33:41', '2016-04-14 15:59:32'),
 (9, 4, '4_570cfa55555c94.14681352.jpg', '', '', 0, '2016-04-12 01:38:29', '2016-04-12 01:38:29'),
 (10, 4, '4_570cfa555697a7.61965160.jpg', '', '', 20, '2016-04-12 01:38:29', '2016-04-12 04:21:03'),
 (11, 4, '4_570cfa5556ffa7.92079158.jpg', '', '', 0, '2016-04-12 01:38:29', '2016-04-12 01:38:29'),
@@ -224,12 +224,12 @@ INSERT INTO `photo_tag` (`photo_id`, `tag_id`, `created_at`, `updated_at`) VALUE
 (7, 2, '2016-04-12 23:55:32', '2016-04-12 23:55:32'),
 (40, 6, '2016-04-14 02:19:10', '2016-04-14 02:19:10'),
 (40, 11, '2016-04-14 02:19:10', '2016-04-14 02:19:10'),
-(41, 8, '2016-04-14 02:19:17', '2016-04-14 02:19:17'),
 (42, 6, '2016-04-14 02:19:19', '2016-04-14 02:19:19'),
-(42, 8, '2016-04-14 02:19:21', '2016-04-14 02:19:21'),
 (8, 8, '2016-04-14 02:26:20', '2016-04-14 02:26:20'),
 (8, 2, '2016-04-14 02:26:32', '2016-04-14 02:26:32'),
-(8, 1, '2016-04-14 02:26:36', '2016-04-14 02:26:36');
+(8, 1, '2016-04-14 02:26:36', '2016-04-14 02:26:36'),
+(41, 1, '2016-04-14 15:47:29', '2016-04-14 15:47:29'),
+(42, 7, '2016-04-14 15:52:53', '2016-04-14 15:52:53');
 
 -- --------------------------------------------------------
 
@@ -283,7 +283,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Eddy', 'edwin@abc.com', '$2y$10$xx2Ql5DXmi3iwV18pElpd.N110A5wNpjGVUK9qSTd11hMKeSkxFQ.', 'rnzySaP6NB5AUuG4AdmbS90yBkxbR42jLWipAIulr0u7eT4E9N2hvf13b2ie', '2016-04-05 02:58:13', '2016-04-14 02:10:34'),
+(1, 'Eddy', 'edwin@abc.com', '$2y$10$xx2Ql5DXmi3iwV18pElpd.N110A5wNpjGVUK9qSTd11hMKeSkxFQ.', 'IQqR35cmKRMqWdMcBMULD1KWT6YklDGi87KmvoDGdMg8xQjSelYC8kafm16p', '2016-04-05 02:58:13', '2016-04-14 04:37:48'),
 (2, 'Admin', 'admin@abc.com', '$2y$10$nWLOstDHy0o4JsOu9TTDquDLLqNLmSTUxGXXdezoxnoPtuCjBiKPO', 'nyQ3BA22qzjKUiWEXdMMP5BSX5pata2XGwfXxcKJtQxeKS1zWnQRbvLYXWBC', '2016-04-14 02:08:38', '2016-04-14 02:08:54');
 
 --
